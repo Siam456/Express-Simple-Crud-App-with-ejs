@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>crud app</title>
+    <style>
+      body{
+        text-align: center;
+      }
+      h1{
+        color: green;
+      }
+
+      input[type=text], select {
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+
+
+      input[type=submit] {
+        background-color: #4CAF50;
+        color: white;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-bottom: 20px;
+      }
+
+      input[type=submit]:hover {
+        background-color: #45a049;
+      }
+      table{
+        margin-left: auto;
+        margin-right: auto;
+      }
+      th, td{
+        padding: 20px;
+      }
+      tr:nth-child(even) {
+        background-color: #eee;
+      }
+      th{
+        background-color: #4CAF50;
+      }
+      .update{
+        display: none;
+      }
+      .vupdate{
+        display: block;
+        background-color: #4CAF50;
+        color: white;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-bottom: 20px;
+        margin-left: 10px;
+      }
+      .vupdate:hover{
+        background-color: #45a049;
+      }
+      .btn-group{
+        display: flex;
+        width: 15%;
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 20px;
+        
+      }
+      
+    </style>
+</head>
+<body>
+    <h1>Mongo Curd Application</h1>
+
+    <h2>Student info collection</h2>
+    
+    <form
+        method="POST"
+        action="/"
+        enctype="multipart/form-data"
+        id="add-user-form"
+      >
+        <input type="text" value="" id='name' placeholder="enter name" name="name" /> 
+        <!-- <p class="err" id='name-err'></p> -->
+        
+
+        <input type="text" value="" id='email' placeholder="enter email" name="email" />
+        <!-- <p class="err" id='email-err'></p> -->
+       <br>
+        <input type="text" value="" id='phone' placeholder="enter phone" name="phone" />
+        <!-- <p class="err" id='phone-err'></p> -->
+        
+
+        <input type="text" value="" id='id' placeholder="enter id" name="id" />
+        
+       <br>
+        <input type="text" value="" id='section' placeholder="enter section" name="section" />
+        
+        <br>
+        
+        <input type="submit" id='add' value="Submit" />
+        
+      </form>
+
+      <p id='err'></p>
+
+      <input id='getV' value="sss" disabled style="display: none;">
+      <div class="btn-group">
+        <button class="update" id='update'>Update</button>
+        <button class="update" id="cancel" onclick="cancel()">Cancel</button>
+      </div>
+      
+        
+      <table >
+        <thead>
+          
+          <tr>
+            <th>Name</th>
+            <th>email</th>
+            <th>phone</th>
+            <th>stu Id</th>
+            <th>section</th>
+            
+            <th>action</th>
+          </tr>
+          <% data.forEach(function(stu) { %>
+          <tr>
+            <td><%= stu.name %></td>
+            <td><%= stu.email %></td>
+            <td><%= stu.phone %></td>
+
+            <td><%= stu.id %></td>
+            
+            <td><%= stu.section %></td>
+      
+            <td>
+              <button onclick="editStu('<%= stu.name %>', '<%= stu.email %>' , '<%= stu.phone %>' , '<%= stu.id %>', '<%= stu.section %>', '<%= stu._id %>')" >Edit</button>
+              <button onclick="deleteStu('<%= stu._id %>')">delete</button>
+            </td>
+
+          </tr>
+          <%})%>
+        </thead>
+      </table>
+       
+
+      <script>
+        var updateID;
+
+        function cancel() {
+          updateID = '';
+          location.reload();
+        }
+       
+       const form = document.querySelector("#add-user-form");
+       
+        
+        form.onsubmit = function (event) {
+          event.preventDefault();
+
+          /////////////s
+          const nformdata = {
+            name: document.getElementById('name'),
+            email: document.getElementById('email'),
+            phone: document.getElementById('phone'),
+            id: document.getElementById('id'),
+            section: document.getElementById('section'),
+          }
+        
+          //console.log(nformdata.name.value);
+         //////////////s
+          
+          //const formData = new FormData(form);
+
+          
+          // for (let [key, value] of formData) {
+          //   console.log(`${key}: ${value}`)
+          // }
+
+          const options = {
+              method: 'POST',
+              headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+              },
+              body: `name=${nformdata.name.value}&email=${nformdata.email.value}&phone=${nformdata.phone.value}&id=${nformdata.id.value}&section=${nformdata.section.value}`,
+          };
+            
+            const response = fetch("/", options).then(response => response.json())
+              .then((body) => {
+                      console.log(body);
+            });
+
+            
+            // if(response.json().errors) {
+            //   Object.keys(response.json().errors).forEach((errname) => {
+            //     const errid = document.getElementById(`${errname}-err`);
+            //     errid.textContent = res.errors[errname].msg;
+            //   })
+
+            // } else{
+            //   console.log(response.json().ress);
+            //   location.reload();
+            // }
+
+            
+          location.reload();
+        };
+
+
+        function deleteStu(id){
+            let resdelete =  fetch(`/${id}` , {
+                 method: "DELETE"
+             }).then(res => console.log(res));
+
+            location.reload();
+        }
+
+          /////////update
+
+
+        document.getElementById("update").addEventListener("click", function(event){
+          event.preventDefault();
+
+          const nformdata = {
+            name: document.getElementById('name'),
+            email: document.getElementById('email'),
+            phone: document.getElementById('phone'),
+            id: document.getElementById('id'),
+            section: document.getElementById('section'),
+          }
+
+          console.log(nformdata.id.value);
+          const options = {
+            method: 'PUT',
+            headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: `name=${nformdata.name.value}&email=${nformdata.email.value}&phone=${nformdata.phone.value}&id=${nformdata.id.value}&section=${nformdata.section.value}`,
+        };
+
+          fetch(`/${updateID}`, options)
+          .then(response => response.json())
+            .then((body) => {
+                    console.log(body);
+            });
+
+          location.reload();
+      });
+
+
+        function editStu(name, email, phone, id, section , _id){
+          updateID = _id;
+          document.getElementById("update").classList.add("vupdate");
+          document.getElementById("cancel").classList.add("vupdate");
+
+          document.getElementById("update").classList.remove("update");
+          document.getElementById("cancel").classList.remove("update");
+
+          document.getElementById("add").classList.add("update");
+          document.getElementById("add").classList.remove("vupdate");
+
+          document.getElementById('name').value = name;
+          document.getElementById('email').value = email;
+          document.getElementById('phone').value = phone;
+          document.getElementById('id').value = id;
+          document.getElementById('section').value = section;
+          
+        }
+
+        
+      </script>
+</body>
+</html>

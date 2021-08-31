@@ -1,0 +1,25 @@
+function updateStu(e){
+          e.preventDefault();
+
+          const nformdata = {
+            name: document.getElementById('name'),
+            id: document.getElementById('id'),
+            section: document.getElementById('section'),
+          }
+
+          console.log(nformdata.id.value);
+          const options = {
+            method: 'POST',
+            headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: `name=${nformdata.name.value}&id=${nformdata.id.value}&section=${nformdata.section.value}`,
+        };
+
+          fetch(`/${id}`, options).then(response => response.json())
+            .then((body) => {
+                    console.log(body);
+            });
+
+          //location.reload();
+      };
